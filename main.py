@@ -27,11 +27,15 @@ def create_data():
     fill_cells()
     for i in range(bombs):
         x = random.randint(0, cols - 1)
-        print('Fila:', x)
         y = random.randint(0, rows - 1)
-        print('Columna:', y)
         data = cells[x][y]
-        print(data)
+
+        while data == -1:
+            x = random.randint(0, cols - 1)
+            y = random.randint(0, rows - 1)
+            data = cells[x][y]
+
+        cells[x][y] = -1
 
 
 def make_board_layout():
@@ -61,6 +65,7 @@ def main():
     window.setWindowTitle('Buscaminas')
 
     create_data()
+    print(cells)
 
     main_layout = QVBoxLayout()
 
