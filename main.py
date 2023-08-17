@@ -38,6 +38,28 @@ def create_data():
         cells[x][y] = -1
 
 
+def calculate_numbers():
+    for x in range(0, rows):
+        for y in range(0, cols):
+            current_cell = cells[x][y]
+            if current_cell == -1:
+                print('Es una bomba')
+            else:
+                if (x == 0 and y == 0) or (x == 0 and y == cols - 1) or (x == rows - 1 and y == 0) or (x == rows - 1 and y == cols -1):
+                    print('Estoy en una esquina')
+                elif x == 0 and (0 < y <= cols - 2):
+                    print('Estoy en el borde superior')
+                elif y == cols - 1 and (0 < x <= rows - 2):
+                    print('Estoy en el borde derecho')
+                elif x == rows - 1 and (0 < y <= cols - 2):
+                    print('Estoy en el borde inferior')
+                elif y == 0 and (0 < x <= rows - 2):
+                    print('Estoy en el borde izquierdo')
+                else:
+                    print('Estoy en el centro')
+
+
+
 def make_board_layout():
     board_layout = QGridLayout()
 
@@ -65,6 +87,8 @@ def main():
     window.setWindowTitle('Buscaminas')
 
     create_data()
+    calculate_numbers()
+
     print(cells)
 
     main_layout = QVBoxLayout()
