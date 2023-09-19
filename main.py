@@ -91,7 +91,7 @@ def calculate_numbers():
 def main():
     app = QApplication(sys.argv)
 
-    window = MainWindow(cols, rows)
+    window = MainWindow(cols, rows, bombs)
 
     create_data()
     calculate_numbers()

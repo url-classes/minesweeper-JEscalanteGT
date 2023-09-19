@@ -4,10 +4,12 @@ from cell_button import CellButton
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, cols: int, rows: int):
+    def __init__(self, cols: int, rows: int, bombs: int):
         super().__init__()
         self.cols = cols
         self.rows = rows
+        self.flags = 0
+        self.bombs = bombs
         self.setWindowTitle('Buscaminas')
 
         self.load_ui()
@@ -29,11 +31,26 @@ class MainWindow(QMainWindow):
 
         for i in range(self.rows):
             for j in range(self.cols):
-                cell_button = CellButton()
-                cell_button.render()
-                board_layout.addWidget(cell_button.element, i, j)
+                cell_button = CellButton(
+                    self.has_flags,
+                    self.add_flag,
+                    self.remove_flag
+                )
+                cell_button.render_data()
+                board_layout.addWidget(cell_button, i, j)
 
         return board_layout
+
+    def has_flags(self) -> bool:
+        return self.flags < self.bombs
+
+    def add_flag(self):
+        print(self.flags)
+        self.flags += 1
+
+    def remove_flag(self):
+        print(self.flags)
+        self.flags -= 1
 
     @staticmethod
     def make_score_layout():
