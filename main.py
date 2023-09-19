@@ -5,6 +5,8 @@ from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow,\
 
 from PyQt6.QtGui import QPalette, QColor
 
+from main_window import MainWindow
+
 import sys
 
 level = 'easy'
@@ -86,47 +88,13 @@ def calculate_numbers():
                 '''
 
 
-def make_board_layout():
-    board_layout = QGridLayout()
-
-    for i in range(rows):
-        for j in range(cols):
-            button = QPushButton()
-            board_layout.addWidget(button, i, j)
-
-    return board_layout
-
-
-def make_score_layout():
-    score_layout = QHBoxLayout()
-    label1 = QLabel('SCORE')
-    score_layout.addWidget(label1)
-
-    return score_layout
-
-
 def main():
     app = QApplication(sys.argv)
 
-    window = QMainWindow()
-
-    window.setWindowTitle('Buscaminas')
+    window = MainWindow(cols, rows)
 
     create_data()
     calculate_numbers()
-
-    print(cells)
-
-    main_layout = QVBoxLayout()
-
-    main_layout.addLayout(make_score_layout())
-    main_layout.addLayout(make_board_layout())
-
-    central_widget = QWidget()
-
-    central_widget.setLayout(main_layout)
-
-    window.setCentralWidget(central_widget)
 
     window.show()
 
