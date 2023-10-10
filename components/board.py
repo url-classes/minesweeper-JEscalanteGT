@@ -45,6 +45,10 @@ class Board(QWidget):
                     top_right_cell = row == 0 and col == cols - 1
                     bottom_left_cell = row == rows - 1 and col == 0
                     bottom_right_cell = row == rows - 1 and col == cols - 1
+                    top_horizontal_cell = row == 0 and 0 < col < cols
+                    bottom_horizontal_cell = row == rows - 1 and 0 < col < cols
+                    left_vertical_cell = col == 0 and 0 < row < rows
+                    right_vertical_cell = col == cols - 1 and 0 < row < rows
 
                     if top_left_cell:
                         button.value = self.visit_corner_cell(0, 0)
@@ -54,6 +58,16 @@ class Board(QWidget):
                         button.value = self.visit_corner_cell(rows - 2, 0)
                     elif bottom_right_cell:
                         button.value = self.visit_corner_cell(rows - 2, cols - 2)
+                    elif top_horizontal_cell:
+                        button.value = self.visit_horizontal_cell(row, col - 1)
+                    elif bottom_horizontal_cell:
+                        button.value = self.visit_horizontal_cell(row - 1, col - 1)
+                    elif left_vertical_cell:
+                        button.value = self.visit_vertical_cell(row - 1, col)
+                    elif right_vertical_cell:
+                        button.value = self.visit_vertical_cell(row - 1, col - 1)
+                    else:
+                        button.value = self.visit_cell(row - 1, col - 1)
 
     def create_buttons(self, rows: int, cols: int):
         self.main_layout = QGridLayout()
@@ -77,12 +91,50 @@ class Board(QWidget):
             button.status = CellButtonStatus.HIDDEN
         button.render_data()
 
+    def visit_cell(self, row: int, col: int):
+        bombs = 0
+
+        bombs = bombs + 1 if self.buttons[row][col].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row][col + 1].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row][col + 2].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row + 1][col + 2].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row + 2][col + 2].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row + 2][col + 1].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row + 2][col].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row + 1][col].bomb else bombs + 0
+
+        return bombs
+
     def visit_corner_cell(self, row: int, col: int):
         bombs = 0
 
         bombs = bombs + 1 if self.buttons[row][col].bomb else bombs + 0
         bombs = bombs + 1 if self.buttons[row][col + 1].bomb else bombs + 0
         bombs = bombs + 1 if self.buttons[row + 1][col + 1].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row + 1][col].bomb else bombs + 0
+
+        return bombs
+
+    def visit_horizontal_cell(self, row: int, col: int) -> int:
+        bombs = 0
+
+        bombs = bombs + 1 if self.buttons[row][col].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row][col + 1].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row][col + 2].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row + 1][col + 2].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row + 1][col + 1].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row + 1][col].bomb else bombs + 0
+
+        return bombs
+
+    def visit_vertical_cell(self, row: int, col: int) -> int:
+        bombs = 0
+
+        bombs = bombs + 1 if self.buttons[row][col].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row][col + 1].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row + 1][col + 1].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row + 2][col + 1].bomb else bombs + 0
+        bombs = bombs + 1 if self.buttons[row + 2][col].bomb else bombs + 0
         bombs = bombs + 1 if self.buttons[row + 1][col].bomb else bombs + 0
 
         return bombs
