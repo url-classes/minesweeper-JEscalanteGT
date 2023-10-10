@@ -12,6 +12,7 @@ class Status(Enum):
 
 class CellButton(QPushButton):
     toggle_flag = pyqtSignal(int, int)
+    discover_board = pyqtSignal(int, int)
 
     def __init__(self, row: int, col: int):
         super().__init__()
@@ -25,8 +26,7 @@ class CellButton(QPushButton):
         if e.button() == Qt.MouseButton.RightButton:
             self.toggle_flag.emit(self.row, self.col)
         elif e.button() == Qt.MouseButton.LeftButton and self.status == Status.HIDDEN:
-            self.status = Status.VISIBLE
-            self.render_data()
+            self.discover_board.emit(self.row, self.col)
 
     def render_data(self):
         if self.status == Status.VISIBLE:

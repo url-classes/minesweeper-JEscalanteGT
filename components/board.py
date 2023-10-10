@@ -5,6 +5,7 @@ from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import QWidget, QGridLayout
 
 from components import CellButton, CellButtonStatus
+from components.cell_button import Status
 
 
 class Board(QWidget):
@@ -77,9 +78,86 @@ class Board(QWidget):
             for col in range(cols):
                 cell_button = CellButton(row, col)
                 cell_button.toggle_flag.connect(self.handle_toggle_flag)
+                cell_button.discover_board.connect(self.handle_discover_board)
                 new_row.append(cell_button)
                 self.main_layout.addWidget(cell_button, row, col)
             self.buttons.append(new_row)
+
+    def handle_discover_board(self, row: int, col: int):
+        cols = 10
+        rows = 10
+        button = self.buttons[row][col]
+
+        if button.bomb:
+            button.status = Status.VISIBLE
+            button.render_data()
+            print('Ha finalizado el juego')
+        elif button.status == Status.HIDDEN:
+            if button.value > 0:
+                button.status = Status.VISIBLE
+                button.render_data()
+            else:
+                button.status = Status.VISIBLE
+                button.render_data()
+
+                top_left_cell = row == 0 and col == 0
+                top_right_cell = row == 0 and col == cols - 1
+                bottom_left_cell = row == rows - 1 and col == 0
+                bottom_right_cell = row == rows - 1 and col == cols - 1
+                top_horizontal_cell = row == 0 and 0 < col < cols
+                bottom_horizontal_cell = row == rows - 1 and 0 < col < cols
+                left_vertical_cell = col == 0 and 0 < row < rows
+                right_vertical_cell = col == cols - 1 and 0 < row < rows
+
+                if top_left_cell:
+                    self.handle_discover_board(0, 1)
+                    self.handle_discover_board(1, 1)
+                    self.handle_discover_board(1, 0)
+                elif top_right_cell:
+                    self.handle_discover_board(0, 8)
+                    self.handle_discover_board(1, 8)
+                    self.handle_discover_board(1, 9)
+                elif bottom_right_cell:
+                    self.handle_discover_board(9, 8)
+                    self.handle_discover_board(8, 8)
+                    self.handle_discover_board(8, 9)
+                elif bottom_left_cell:
+                    self.handle_discover_board(8, 0)
+                    self.handle_discover_board(8, 1)
+                    self.handle_discover_board(9, 1)
+                elif top_horizontal_cell:
+                    self.handle_discover_board(row, col - 1)
+                    self.handle_discover_board(row + 1, col - 1)
+                    self.handle_discover_board(row + 1, col)
+                    self.handle_discover_board(row + 1, col + 1)
+                    self.handle_discover_board(row, col + 1)
+                elif bottom_horizontal_cell:
+                    self.handle_discover_board(row, col - 1)
+                    self.handle_discover_board(row - 1, col - 1)
+                    self.handle_discover_board(row - 1, col)
+                    self.handle_discover_board(row - 1, col + 1)
+                    self.handle_discover_board(row, col + 1)
+                elif left_vertical_cell:
+                    self.handle_discover_board(row - 1, col)
+                    self.handle_discover_board(row - 1, col + 1)
+                    self.handle_discover_board(row, col + 1)
+                    self.handle_discover_board(row + 1, col + 1)
+                    self.handle_discover_board(row + 1, col)
+                elif right_vertical_cell:
+                    self.handle_discover_board(row + 1, col)
+                    self.handle_discover_board(row + 1, col - 1)
+                    self.handle_discover_board(row, col - 1)
+                    self.handle_discover_board(row - 1, col - 1)
+                    self.handle_discover_board(row - 1, col)
+                else:
+                    self.handle_discover_board(row - 1, col)
+                    self.handle_discover_board(row - 1, col + 1)
+                    self.handle_discover_board(row, col + 1)
+                    self.handle_discover_board(row + 1, col + 1)
+                    self.handle_discover_board(row + 1, col)
+                    self.handle_discover_board(row + 1, col - 1)
+                    self.handle_discover_board(row, col - 1)
+                    self.handle_discover_board(row - 1, col - 1)
 
     def handle_toggle_flag(self, row: int, col: int):
         button = self.buttons[row][col]
